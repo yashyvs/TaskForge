@@ -6,11 +6,15 @@ import { useSession } from "next-auth/react";
 export default function Home() {
   const { data: session, status } = useSession();
   return (
+<<<<<<< Updated upstream
     <div>
       <Button onClick={signIn}>Login</Button>
+=======
+    <div className="pt-16">
+      <Button onClick={signIn} label="Login" />
+>>>>>>> Stashed changes
       <br />
       {status}
-      <pre className="text-inverse">{JSON.stringify(session)}</pre>
     </div>
   );
 }
