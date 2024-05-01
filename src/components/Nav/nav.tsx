@@ -52,7 +52,7 @@ const NavRenderer = (props: Composition) => {
 };
 
 const NavLogo = () => {
-  return <div className="text-white sm:ml-3">JS CAFE</div>;
+  return <div className="text-white sm:ml-3">Task Forge</div>;
 };
 
 const NavItem = (props: Composition) => {
