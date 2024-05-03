@@ -2,9 +2,10 @@
 import useWindowDimensions from "@/hooks/useWindowDimensions";
 import { HamburgerMenuIcon } from "@radix-ui/react-icons";
 import type { ReactNode } from "react";
-import { Suspense, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { NavAvatar } from "./NavAvatar";
 import ThemeToggle from "./ThemeToggle";
+import { NavDataType } from "./nav.type";
 
 interface Composition {
   children: ReactNode;
@@ -51,8 +52,9 @@ const NavRenderer = (props: Composition) => {
   );
 };
 
-const NavLogo = () => {
-  return <div className="text-white sm:ml-3">Task Forge</div>;
+const NavLogo = (props: Composition) => {
+  const { children } = props;
+  return <div className="text-white sm:ml-3">{children}</div>;
 };
 
 const NavItem = (props: Composition) => {
@@ -65,24 +67,38 @@ const NavItem = (props: Composition) => {
 };
 
 const Navbar = () => {
+  const navItemMap = {
+    logo: NavLogo,
+    item: NavItem,
+    avatar: NavAvatar,
+    themeToggle: ThemeToggle,
+  };
+  const [navbarData, setNavbarData] = useState<NavDataType>([]);
+  useEffect(() => {
+    const fetchConfig = async () => {
+      const response = await fetch("/api/config");
+      const { data } = await response.json();
+      const navdata = data.navData as NavDataType;
+      setNavbarData(navdata);
+    };
+    fetchConfig();
+  }, []);
   return (
     <NavContainer>
       <NavRenderer>
-        <NavGroup>
-          <NavLogo />
-        </NavGroup>
-        <NavGroup>
-          <NavItem>Your Work</NavItem>
-          <NavItem>Projects</NavItem>
-          <NavItem>Filters</NavItem>
-        </NavGroup>
-        <NavGroup>
-          <NavAvatar />
-          <ThemeToggle />
-        </NavGroup>
+        {navbarData.map((navGroup) => {
+          return (
+            <NavGroup key={navGroup.id}>
+              {navGroup.items.map((navItem) => {
+                const Item = navItemMap[navItem.type] || <></>;
+                return <Item key={navItem.id}>{navItem.content}</Item>;
+              })}
+            </NavGroup>
+          );
+        })}
       </NavRenderer>
     </NavContainer>
   );
 };
 
-export { Navbar };
+export { Navbar, NavLogo, NavItem };
