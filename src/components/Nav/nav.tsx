@@ -5,7 +5,9 @@ import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
 import { NavAvatar } from "./NavAvatar";
 import ThemeToggle from "./ThemeToggle";
+
 import { NavDataType } from "./nav.type";
+// import { navItemMap } from './navItemMap';
 
 interface Composition {
   children: ReactNode;
@@ -66,7 +68,12 @@ const NavItem = (props: Composition) => {
   );
 };
 
-const Navbar = () => {
+interface NavbarInterface {
+  externalNavData?: null | NavDataType;
+}
+
+const Navbar = (props: NavbarInterface) => {
+  const { externalNavData = null } = props;
   const navItemMap = {
     logo: NavLogo,
     item: NavItem,
@@ -81,8 +88,12 @@ const Navbar = () => {
       const navdata = data.navData as NavDataType;
       setNavbarData(navdata);
     };
-    fetchConfig();
-  }, []);
+    if (!externalNavData) {
+      fetchConfig();
+    } else {
+      setNavbarData(externalNavData);
+    }
+  }, [externalNavData]);
   return (
     <NavContainer>
       <NavRenderer>
